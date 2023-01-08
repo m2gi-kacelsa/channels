@@ -3,6 +3,7 @@ package edu.uga.m2gi.ar.queue;
 import edu.uga.m2gi.ar.channels.CircularBuffer;
 
 public class MessageQueue {
+	
 	public CircularBuffer readBuffer;
 	public CircularBuffer writeBuffer;
 
