@@ -18,40 +18,40 @@ public class TaskQueueImpl extends TaskQueue {
 		// TODO Auto-generated method stub
 		Broker.rendezVous = new ArrayList<RendezVous>();
 		QueueBroker broker1 = new QueueBroker("BrokerA");
-
-		new TaskQueueImpl(broker1) {
-			@Override
-			public void run() {
-				MessageQueue messageQueue = this.m_broker.accept(90);
-				try {
-					messageQueue.send(message.getBytes(), 0, message.getBytes().length);
-					System.out.println("message sent!  . . . . ");
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}.start();
+		TaskQueue taskQueue = new TaskQueueImpl(broker1);
+		taskQueue.start();
 
 		QueueBroker broker2 = new QueueBroker("BrokerB");
-		new TaskQueueImpl(broker2) {
-			@Override
-			public void run() {
-				MessageQueue messageQueue = this.m_broker.connect("BrokerA", 90);
-				byte[] bytes = new byte[message.getBytes().length];
-				try {
-					bytes = messageQueue.receive();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}.start();
+		TaskQueue taskQueue2 = new TaskQueueImpl(broker2);
+		taskQueue2.start();
 	}
 
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+
+		if (this.m_broker.nom.equals("BrokerA")) {
+			System.out.println("accept . . .");
+			MessageQueue messageQueue = this.m_broker.accept(90);
+			try {
+				messageQueue.send(message.getBytes(), 0, message.getBytes().length);
+				System.out.println("message sent  . . . . ");
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("connect . . .");
+			MessageQueue messageQueue = this.m_broker.connect("BrokerA", 90);
+			byte[] bytes = new byte[message.getBytes().length];
+			try {
+				bytes = messageQueue.receive();
+				System.out.println("bytes received : " + bytes.length);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 	}
 

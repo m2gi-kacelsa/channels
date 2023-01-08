@@ -47,7 +47,6 @@ public class Channel {
 				}
 			}
 		}
-
 		return numberBytesReaden;
 	}
 

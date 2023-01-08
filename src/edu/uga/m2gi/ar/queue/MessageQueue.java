@@ -7,13 +7,13 @@ public class MessageQueue {
 	public CircularBuffer writeBuffer;
 
 	public MessageQueue() {
-		this.readBuffer = new CircularBuffer(64);
-		this.writeBuffer = new CircularBuffer(64);
+		this.readBuffer = new CircularBuffer(512);
+		this.writeBuffer = new CircularBuffer(512);
 	}
 
-	public MessageQueue(CircularBuffer readBuffer, CircularBuffer writeBuffer) {
-		this.readBuffer = writeBuffer;
-		this.writeBuffer = readBuffer;
+	public MessageQueue(MessageQueue messageQueue) {
+		this.readBuffer = messageQueue.writeBuffer;
+		this.writeBuffer = messageQueue.readBuffer;
 	}
 
 	public void send(byte[] bytes, int offset, int length) throws InterruptedException {
@@ -23,7 +23,7 @@ public class MessageQueue {
 			}
 
 			for (int i = 0; i < length; i++) {
-				writeBuffer.push(bytes[i + offset]);
+				writeBuffer.push(bytes[i]);
 			}
 			writeBuffer.notifyAll();
 
