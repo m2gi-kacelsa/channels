@@ -2,15 +2,20 @@ package edu.uga.m2gi.ar.channels;
 
 public class Channel {
 
-	private CircularBuffer readBuffer;
-	private CircularBuffer writeBuffer;
-	final int CAPACITY_BUFFER = 40;
+	public CircularBuffer readBuffer;
+	public CircularBuffer writeBuffer;
+	final int CAPACITY_BUFFER = 64;
 
 	public Channel() {
 		readBuffer = new CircularBuffer(CAPACITY_BUFFER);
 		writeBuffer = new CircularBuffer(CAPACITY_BUFFER);
 	}
-
+	
+	public Channel(Channel channel) {
+		readBuffer = channel.writeBuffer;
+		writeBuffer = channel.readBuffer;
+	}
+	
 	public int read(byte[] bytes, int offset, int length) {
 		// varaiable to count the number of bytes readen
 		int numberBytesReaden = 0;
@@ -33,6 +38,7 @@ public class Channel {
 			}
 			// Buffer Empty
 			else {
+				System.out.println("readBuffer is Empty!!");
 				try {
 					readBuffer.wait();
 				} catch (InterruptedException e) {
@@ -68,7 +74,6 @@ public class Channel {
 						numberBytesWritten++;
 					}
 				}
-
 				writeBuffer.notify();
 			}
 		}
@@ -76,7 +81,7 @@ public class Channel {
 	}
 
 	public void disconnect() {
-		throw new RuntimeException("Not Implemented Yet");
+		Broker.rendezVous.clear();
 	}
 
 	public boolean disconnected() {
